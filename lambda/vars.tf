@@ -18,9 +18,9 @@ variable "cw_retention_in_days" {
   default = "14"
 }
 
-variable "lambda_environment" {
+variable "environment" {
   description = "The Environment lambda functions are deploymed on. Changes the prefix and names of resources. eg: dev, stag, prod"
-  type        = number
+  type        = string
   default = "dev"
 }
 

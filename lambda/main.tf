@@ -35,7 +35,7 @@ data "archive_file" "lambda" {
 
 resource "aws_lambda_layer_version" "lambda_layer" {
   filename   = "tm_extractor_python3_layer.zip"
-  layer_name = format("%s_%s","lambda_raw_data_cron_layer", $var.lambda_environment)
+  layer_name = format("%s_%s","lambda_raw_data_cron_layer", $var.environment)
 
   compatible_runtimes = ["python3.8"]
 }
@@ -53,7 +53,7 @@ resource "aws_cloudwatch_log_group" "lambda_raw_data_cron" {
 resource "aws_lambda_function" "lambda_raw_data" {
 
   filename      = "cron_raw_data.zip"
-  function_name = format("%s_%s","tm_extractor", $var.lambda_environment)
+  function_name = format("%s_%s","tm_extractor", $var.environment)
   role          = aws_iam_role.iam_for_lambda_tm.arn
   handler       = "tm_extractor.lambda_handler"
   memory_size   = var.lambda_memory_size
@@ -86,7 +86,7 @@ resource "aws_lambda_function" "lambda_raw_data" {
 }
 
 resource "aws_iam_policy" "lambda_logging" {
-  name        = format("%s_%s","lambda_raw_data_logging", $var.lambda_environment)
+  name        = format("%s_%s","lambda_raw_data_logging", $var.environment)
   path        = "/"
   description = "IAM policy for logging from this lambda function"
 
@@ -114,7 +114,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 }
 
 resource "aws_cloudwatch_event_rule" "cron_raw_data_lambda_schedule" {
-  name        = format("%s_%s","cron_raw_data_lambda_schedule", $var.lambda_environment)
+  name        = format("%s_%s","cron_raw_data_lambda_schedule", $var.environment)
   description = "Schedule rule to trigger Lambda"
   schedule_expression = var.lambda_cron_expression  # Runs day 12 am.
 }
@@ -134,7 +134,7 @@ resource "aws_cloudwatch_event_target" "cron_raw_data_lambda_target" {
 
 
 resource "aws_cloudwatch_metric_alarm" "lambda_error_alarm" {
-  alarm_name          = format("%s_%s","lambda_raw_data_error_alarm", $var.lambda_environment)
+  alarm_name          = format("%s_%s","lambda_raw_data_error_alarm", $var.environment)
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 5
   threshold           = 2  # Number of errors that trigger the alarm.
